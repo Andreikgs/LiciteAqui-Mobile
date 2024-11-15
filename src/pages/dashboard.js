@@ -6,7 +6,7 @@ export default props=>{
 
     return(
         <View style={estilo.container}>
-            <Text>Teste</Text>
+            <Text>Jose É GAY</Text>
         </View>
     )
 }

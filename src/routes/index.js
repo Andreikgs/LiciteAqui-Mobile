@@ -13,7 +13,7 @@ export default props =>(
                 initalRouteName="Login"
                 screenOptions={{headerShown:false}}
             >
-                <Drawer.Screen name="Login" component={login} options={{swipeEnabled: false, drawerLockMode: 'locked-closed'}}/>
+                <Drawer.Screen name="Login" component={login} options={{swipeEnabled: false, drawerLockMode: 'locked-closed', drawerItemStyle: { display: 'none' },}}/>
                 <Drawer.Screen name="DashBoard" component={dashboard}/>
             </Drawer.Navigator>
         </GestureHandlerRootView>

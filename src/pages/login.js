@@ -33,7 +33,7 @@ export default props =>{
 
                 <TouchableOpacity
                     style={estilo.btn}
-                    onClick={() => setCurrentScreen('home')}
+                    onPress={() => props.navigation.navigate('DashBoard')}
                 >
                     <Text style={estilo.labelbtn}>LOGIN</Text>
                 </TouchableOpacity>
