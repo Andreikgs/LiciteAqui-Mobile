@@ -43,13 +43,23 @@ export default licitacao =>{
                     value={cliente}
                     onChangeText={(cli)=>setCliente(cli)}
                 />
-                <TextInput
-                    placeholder="Modalidade"
-                    placeholderTextColor="#000"
-                    style={estilo.input}
-                    value={modalidade}
-                    onChangeText={(mod)=>setModalidade(mod)}
-                />
+                <View style={estilo.input}>
+                    <Picker
+                        selectedValue={modalidade}
+                        onValueChange={(mod) => setModalidade(mod)}
+                        style={estilo.picker}
+                    >
+                        <Picker.Item label="Modalidade" value="" />
+                        <Picker.Item label="Pregão Eletronico" value="PE" />
+                        <Picker.Item label="Pregão Presencial" value="PP" />
+                        <Picker.Item label="Tomada De Preço" value="TP" />
+                        <Picker.Item label="Concorrencia" value="CO" />
+                        <Picker.Item label="Convite" value="CV" />
+                        <Picker.Item label="Concurso" value="CN" />
+                        <Picker.Item label="Leilão" value="LE" />
+                        <Picker.Item label="Dialogo Competitivo" value="DC" />
+                    </Picker>
+                </View>
                 <TextInput
                     placeholder="N° Licitação"
                     placeholderTextColor="#000"
