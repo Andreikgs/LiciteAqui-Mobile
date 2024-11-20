@@ -59,7 +59,7 @@ const estilo = StyleSheet.create({
     },
     label:{
         fontSize: 25,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     input:{
         justifyContent: 'center',
