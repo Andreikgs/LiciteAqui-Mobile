@@ -63,6 +63,7 @@ export default props =>{
         >
             <View style={estilo.overlay} />
             <View style={estilo.login}>
+                <Text style={estilo.titulo}>LiciteAqui</Text>
                 <Text style={estilo.label}>USERNAME</Text>
                 <TextInput 
                     placeholder="Usename"
@@ -118,6 +119,14 @@ const estilo = StyleSheet.create({
         marginBottom: 10,
         width: '78%',
         textAlign: 'left',
+        color: '#878787'
+    },
+    titulo:{
+        fontSize: 27,
+        fontWeight: 'bold',
+        marginBottom: 35,
+        width: '100%',
+        textAlign: 'center',
         color: '#878787'
     },
     input:{
