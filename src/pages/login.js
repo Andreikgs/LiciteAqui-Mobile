@@ -13,16 +13,16 @@ export default props =>{
     const handleLogin = async () => {           
         try {
             // Envio da requisição post para a API com o endpoint de buscar usuários com login
-            const response = await api.post("/usuarios", {
+            const response = await api.post("/login/autentic", {
                 username: valorLogin,
                 senha: valorSenha
             });
 
             if(response.data){
                 // Função para salvar os dados do usuário no storage
-                //await SaveUser(response.data.data);
+                await SaveUser(response.data);
                 // Função para levar as informações do usúario ao context global
-                setUser(response.data.data);
+                setUser(response.data);
             }
             console.log(response.data);
         } catch (error) {
@@ -53,7 +53,7 @@ export default props =>{
 
     // Usando use effect para buscar no storage os dados de login na primeira vez que a página for carregada 
     useEffect(()=>{
-        //CarregarDados();
+        CarregarDados();
     }, []);
 
     return(

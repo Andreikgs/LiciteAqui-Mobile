@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://192.168.15.10:3000", // Altere para seu ip local mantendo a porta do .env da api
+    baseURL: "http://127.0.0.1:3000",
     headers: {
         "Content-Type": "application/json",
     },
