@@ -6,6 +6,8 @@ import licitacao from "../pages/licitacao";
 import cliente from "../pages/cliente";
 import clientesLista from "../pages/clientesLista";
 import licitacoesLista from "../pages/licitacoesLista";
+import contatosLista from "../pages/contatosLista";
+import servicosLista from "../pages/servicos";
 
 const Drawer = createDrawerNavigator();
 
@@ -21,6 +23,8 @@ export default props =>(
                 <Drawer.Screen name="Minhas Licitações" component={licitacoesLista}/>
                 <Drawer.Screen name="Adicionar Cliente" component={cliente}/>
                 <Drawer.Screen name="Lista de Clientes" component={clientesLista}/>
+                <Drawer.Screen name="Contatos" component={contatosLista}/>
+                <Drawer.Screen name="Serviços" component={servicosLista}/>
 
             </Drawer.Navigator>
         </GestureHandlerRootView>

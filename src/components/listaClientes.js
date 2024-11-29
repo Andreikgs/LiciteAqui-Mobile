@@ -116,15 +116,17 @@ export default function ListaClientes() {
         <Text style={styles.cardSubtitle}>CNPJ: {item.cnpj}</Text>
         <Text>Status: {item.status ? "Ativo" : "Inativo"}</Text>
       </View>
-      <TouchableOpacity
-        onPress={() => {
-          setSelectedCliente(item);
-          setDeleteModalVisible(true);
-        }}
-        style={[styles.buttonDelete]}
-      >
-        <Text style={styles.buttonText}>X</Text>
-      </TouchableOpacity>
+      <View style={styles.divButton}>
+         <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#FF6347" }]}
+            onPress={() => {
+              setSelectedCliente(item);
+              setDeleteModalVisible(true);
+            }}
+          >
+            <Text style={styles.buttonText}>Excluir</Text>
+          </TouchableOpacity>
+      </View>  
     </TouchableOpacity>
   );
 
@@ -291,6 +293,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
+    marginBottom: 5
   },
   input: {
     borderWidth: 1,
@@ -310,14 +313,16 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#007bff",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    padding: 10,
     borderRadius: 5,
     alignItems: "center",
+    marginHorizontal: 5,
+    flex: 1,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 14,
+    textAlign: "center",
   },
   buttonDelete: {
     backgroundColor: "#FF6347",

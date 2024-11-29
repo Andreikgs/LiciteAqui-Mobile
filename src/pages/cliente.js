@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TextInput, View, Text, TouchableOpacity, Alert } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
@@ -13,7 +13,7 @@ export default cliente =>{
     const [status, setStatus] = useState("");
     const [data, setData] = useState(new Date());
     const { user } = useContext(AuthContext);
-
+    const [servicos, setServicos] = useState([]);
     
     const [showDatePicker, setShowDatePicker] = useState(false);
     
@@ -58,12 +58,9 @@ export default cliente =>{
     const [ddd, setDDD] = useState("");
     const [dataBirth, setDataBirth] = useState(new Date());
     const [showDatePickerBirth, setShowDatePickerBirth] = useState(false);
+    const [servico, setServico] = useState('');
 
     const handleContato = async (id_cliente) => {  
-        // if (!nome || !email || !tipoTel || !tel || !sexo || !sexo || !cpf || !ddd || !email || !dataBirth) {
-        //     return;
-        // }
-        console.log('nome: ' + nome + ' email: ' + email + ' tipo tel: ' + tipoTel + ' tel: ' + tel + ' sexo: ' + sexo +  'cpf: ' + cpf + ' ddd: ' + ddd + ' email: ' + email + 'data_nascimento :' + formatarData(dataBirth));
         try {
             // Envio da requisição post para a API com o endpoint de cadastrar contatos
             const response = await api.post("/contatoCliente/cadastrar", {
@@ -95,6 +92,23 @@ export default cliente =>{
         }
     }
 
+    const fetchServicos = async () => {
+        try {
+            const response = await api.get("/tipoServico/listar");
+            setServicos(response.data);
+        } catch (error) {
+            // Log completo para depuração
+            console.log("Erro completo:", error);
+    
+            if (error.response?.data?.message) {
+                // Exibe a mensagem de erro retornada pela API
+                Alert.alert(error.response.data.message);
+            } else {
+                Alert.alert("Ocorreu um erro.");
+            }
+        }
+    }
+
     const formatarData = (data) => {
         const ano = data.getFullYear();
         const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês inicia em 0
@@ -105,23 +119,23 @@ export default cliente =>{
     const formatarCPF = (texto) => {
         let value = texto.replace(/\D/g, '');
 
-        if (value.length > 11) {
-            value = value.substring(0, 11);
-        }
+        // if (value.length > 11) {
+        //     value = value.substring(0, 11);
+        // }
 
-        if (value.length > 0) {
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-        }
+        // if (value.length > 0) {
+        //     value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        // }
 
-        if (value.length > 7) {
-            value = value.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
-        }
+        // if (value.length > 7) {
+        //     value = value.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+        // }
 
-        if (value.length > 11) {
-            value = value.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
-        }
+        // if (value.length > 11) {
+        //     value = value.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
+        // }
 
-        setCpf(value);
+         setCpf(value);
     };
 
     const formatarCNPJ = (texto) => {
@@ -150,7 +164,9 @@ export default cliente =>{
         setCnpj(value);
     };
 
-   
+    useEffect(()=> {
+        fetchServicos();
+    })
 
     return(
         <View style={estilo.container}>
@@ -185,6 +201,25 @@ export default cliente =>{
                 />
                 <Text style={estilo.description}>Informe o Nome Fantasia.</Text>
             
+                <Text style={estilo.label}>Serviço</Text>
+                <View style={estilo.input}>
+                    <Picker
+                        selectedValue={servico}
+                        onValueChange={(value) => setServico(value)}
+                        style={estilo.picker}
+                    >
+                        <Picker.Item label="Selecione um serviço" value="" />
+                        {servicos.map((servico) => (
+                            <Picker.Item
+                                key={servico.id_tipo_servico} // Corrigido para usar o identificador correto
+                                label={servico.descricao} // Exibe a descrição do serviço
+                                value={servico.id_tipo_servico} // Envia o ID do serviço ao selecionar
+                            />
+                        ))}
+                    </Picker>
+                </View>
+                <Text style={estilo.description}>Informe o tipo de serviço do cliente.</Text>
+
                 <Text style={estilo.label}>Status</Text>
                 <View style={estilo.input}>
                     <Picker

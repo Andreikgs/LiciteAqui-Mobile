@@ -2,8 +2,6 @@ import { StyleSheet, Text, View } from "react-native"
 import ListaLicitacoes  from "../components/listaLicitacoes";
 
 export default props=>{
-    
-
     return(
         <View style={estilo.container}>
             <ListaLicitacoes />
