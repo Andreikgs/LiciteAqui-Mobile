@@ -10,6 +10,7 @@ import contatosLista from "../pages/contatosLista";
 import servicosLista from "../pages/servicos";
 import usuarios from "../pages/usuarios";
 import listaUsuarios from "../pages/listaUsuarios";
+import documentos from "../pages/documentos";
 
 const Drawer = createDrawerNavigator();
 
@@ -27,8 +28,9 @@ export default props =>(
                 <Drawer.Screen name="Lista de Clientes" component={clientesLista}/>
                 <Drawer.Screen name="Contatos" component={contatosLista}/>
                 <Drawer.Screen name="Serviços" component={servicosLista}/>
+                <Drawer.Screen name="Documentos" component={documentos}/>
                 <Drawer.Screen name="Adicionar Usuário" component={usuarios}/>
-                <Drawer.Screen name="Lista Usuários" component={usuarios}/>
+                <Drawer.Screen name="Lista Usuários" component={listaUsuarios}/>
 
             </Drawer.Navigator>
         </GestureHandlerRootView>

@@ -14,6 +14,7 @@ import {
 import api from "../constants/api";
 import { Picker } from "@react-native-picker/picker";
 import { AuthContext } from "../contexts/auth";
+import Checklist from "../components/checklist"; // Certifique-se de que o componente está exportado corretamente
 
 export default function ListaLicitacoes() {
   const [licitacoes, setLicitacoes] = useState([]);
@@ -21,6 +22,7 @@ export default function ListaLicitacoes() {
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedLicitacao, setSelectedLicitacao] = useState(null);
+  const [modalChecklist, setModalChecklist] = useState(false); // Estado para controle do modal do Checklist
 
   // Campos do modal de edição
   const [numLicitacao, setNumLicitacao] = useState("");
@@ -123,30 +125,41 @@ export default function ListaLicitacoes() {
     fetchLicitacoes();
   }, []);
 
+  const openChecklistModal = (item) => {
+    setSelectedLicitacao(item);
+    setModalChecklist(true);
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <TouchableOpacity
-        onPress={() => openEditModal(item)} // Abre o modal de edição
-        style={{ flex: 1 }}
-      >
-        <View>
-          <Text style={styles.cardTitle}>{item.num_licitacao}</Text>
-          <Text style={styles.cardSubtitle}>Objeto: {item.objeto}</Text>
-          <Text>Órgão: {item.orgao}</Text>
-          <Text>Data Licitação: {new Date(item.data_licitacao).toLocaleDateString()}</Text>
-          <Text>Status: {item.status ? "Ativo" : "Inativo"}</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.buttonDelete}
-        onPress={() => {
-          setSelectedLicitacao(item); // Define o item selecionado
-          setDeleteModalVisible(true); // Abre o modal de exclusão
-        }}
-      >
-        <Text style={styles.buttonText}>Excluir</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity 
+      style={styles.card}
+      onPress={() => openChecklistModal(item) }
+    >
+      <View>
+        <Text style={styles.cardTitle}>{item.num_licitacao}</Text>
+        <Text style={styles.cardSubtitle}>Objeto: {item.objeto}</Text>
+        <Text>Órgão: {item.orgao}</Text>
+        <Text>Data Licitação: {new Date(item.data_licitacao).toLocaleDateString()}</Text>
+        <Text>Status: {item.status ? "Ativo" : "Inativo"}</Text>
+      </View>
+      <View>
+        <TouchableOpacity
+          onPress={() => openEditModal(item)} // Abre o modal de edição
+          style={styles.buttonEdit}
+        >
+          <Text style={styles.buttonText}>Editar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonDelete}
+          onPress={() => {
+            setSelectedLicitacao(item); // Define o item selecionado
+            setDeleteModalVisible(true); // Abre o modal de exclusão
+          }}
+        >
+          <Text style={styles.buttonText}>Excluir</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -262,6 +275,29 @@ export default function ListaLicitacoes() {
           </View>
         </View>
       </Modal>
+
+      {/* Modal do Checklist */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalChecklist}
+        onRequestClose={() => setModalChecklist(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            {/* Componente Checklist */}
+            {selectedLicitacao && (
+              <Checklist data={selectedLicitacao} /> // Passa a licitação selecionada para o Checklist
+            )}
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalChecklist(false)} // Fecha o modal
+            >
+              <Text style={styles.closeButtonText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -286,6 +322,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    flex: 1
   },
   cardTitle: {
     fontSize: 18,
@@ -299,6 +336,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF6347",
     padding: 10,
     borderRadius: 5,
+  },
+  buttonEdit: {
+    backgroundColor: "#ffee4d",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 5 
   },
   buttonText: {
     color: "#fff",
