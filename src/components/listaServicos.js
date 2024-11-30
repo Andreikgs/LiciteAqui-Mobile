@@ -98,7 +98,7 @@ export default function ListaServicos({ servicos, atualizarLista }) {
                             placeholder="Digite a descrição"
                         />
                         <TouchableOpacity
-                            style={styles.button}
+                            style={[styles.button, {backgroundColor: "rgb(170, 209, 120)"}]}
                             onPress={salvarEdicao}
                         >
                             <Text style={styles.buttonText}>Salvar</Text>

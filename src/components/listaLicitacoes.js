@@ -33,15 +33,18 @@ export default function ListaLicitacoes() {
 
   // Função para excluir a licitação
   const deleteLicitacao = async () => {
-    if (!selectedLicitacao?.id_licitacao) {
+    if (!selectedLicitacao?.num_licitacao) {
       Alert.alert("Erro", "Nenhuma licitação selecionada.");
       console.warn("Delete attempt without a selected licitação.");
       return;
     }
-    console.log(selectedLicitacao.id_licitacao, user.usuario);
+    // console.log(selectedLicitacao.num_licitacao, user.usuario);
     try {
       await api.delete("/licitacao/deletar/", {
-        id_licitacao : selectedLicitacao.id_licitacao, usuario : user.usuario,
+        data: {
+          id_licitacao: selectedLicitacao.num_licitacao,
+          usuario: user.usuario,
+        }
       });
         Alert.alert("Sucesso", "Licitação excluída com sucesso!");
         setSelectedLicitacao(null);
@@ -107,7 +110,6 @@ export default function ListaLicitacoes() {
 
   // Mantém a edição intacta
   const openEditModal = (item) => {
-    console.log('status:' + item.status + "|")
     setSelectedLicitacao(item);
     setNumLicitacao(item.num_licitacao || "");
     setObjeto(item.objeto || "");

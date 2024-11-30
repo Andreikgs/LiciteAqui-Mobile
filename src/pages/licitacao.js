@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TextInput, View, Text, TouchableOpacity, Alert } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
@@ -22,7 +22,8 @@ export default licitacao =>{
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const { user } = useContext(AuthContext);
-
+    const [clientes, setClientes] = useState([]);
+    
     const formatarData = (data) => {
         const ano = data.getFullYear();
         const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês inicia em 0
@@ -64,6 +65,27 @@ export default licitacao =>{
         }
     }
 
+    const fetchClientes = async ()=> {
+        try {
+            const response = await api.get("/cliente/listar");
+            setClientes(response.data);
+        } catch (error) {
+            // Log completo para depuração
+            console.log("Erro completo:", error);
+    
+            if (error.response?.data?.message) {
+                // Exibe a mensagem de erro retornada pela API
+                Alert.alert(error.response.data.message);
+            } else {
+                Alert.alert("Ocorreu um erro. Tente novamente mais tarde.");
+            }
+        }
+    }
+
+    useEffect(() => {
+        fetchClientes();
+    }, []);
+
     return(
         <View style={estilo.container}>
             <ScrollView 
@@ -80,15 +102,23 @@ export default licitacao =>{
                     onChangeText={(org)=>setOrgao(org)}
                 />
                 <Text style={estilo.description}>Informe o órgão responsável.</Text>
-                <Text style={estilo.label}>Cliente</Text>
-                <TextInput
-                    placeholder=""
-                    placeholderTextColor="#000"
-                    style={estilo.input}
-                    value={cliente}
-                    onChangeText={(cli)=>setCliente(cli)}
-                />
-                <Text style={estilo.description}>Informe o cliente.</Text>
+
+                <View style={estilo.input}>
+                <Picker
+                    selectedValue={cliente} 
+                    onValueChange={(value) => setCliente(value)} // Atualiza o estado com o ID do cliente
+                    style={estilo.picker}
+                >
+                    <Picker.Item label="Selecione um cliente" value="" />
+                    {clientes.map((cliente) => (
+                        <Picker.Item
+                            key={cliente.id_cliente} // Chave única para cada item
+                            label={cliente.razao_social} // Nome do cliente exibido
+                            value={cliente.id_cliente} // ID do cliente armazenado no estado
+                        />
+                    ))}
+                </Picker>
+                </View>
 
                 <Text style={estilo.label}>Modalidade</Text>
                 <View style={estilo.input}>

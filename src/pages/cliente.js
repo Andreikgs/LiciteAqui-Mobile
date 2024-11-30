@@ -34,10 +34,9 @@ export default cliente =>{
                 data_cadastro : formatarData(data),
                 usuario : user.usuario  
             });
-            // console.log(response.data);
         } catch (error) {
+            handleContato(3); // apenas para teste enquanto o cliente n retornar 200
             // Log completo para depuração
-            handleContato(1);
             console.log("Erro completo:", error);
     
             if (error.response?.data?.message) {
@@ -166,7 +165,7 @@ export default cliente =>{
 
     useEffect(()=> {
         fetchServicos();
-    })
+    }, [])
 
     return(
         <View style={estilo.container}>
