@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView, StyleSheet, TextInput, View, Text, TouchableOpacity, Alert } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
@@ -163,9 +164,11 @@ export default cliente =>{
         setCnpj(value);
     };
 
-    useEffect(()=> {
-        fetchServicos();
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            fetchServicos();
+        }, [])
+    );
 
     return(
         <View style={estilo.container}>

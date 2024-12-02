@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -11,6 +11,7 @@ import {
   TextInput,
   Alert
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import api from "../constants/api"; // Supondo que o Axios esteja configurado em `api.js`
 import { Picker } from "@react-native-picker/picker";
 import { AuthContext } from '../contexts/auth';
@@ -90,10 +91,13 @@ export default function ListaClientes() {
       Alert.alert("Erro", "Não foi possível excluir o cliente.");
     }
   };
-  useEffect(() => {
-    fetchClientes();
-  }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchClientes();
+    }, [])
+  );
+  
   useEffect(() => {
     if (selectedCliente) {
       setCnpj(selectedCliente.cnpj || "");

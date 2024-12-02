@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import api from "../constants/api";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function UsuariosList() {
   const [usuarios, setUsuarios] = useState([]); // Lista de usuários
@@ -29,10 +30,12 @@ export default function UsuariosList() {
     }
   };
 
-  // UseEffect para carregar os usuários ao montar o componente
-  useEffect(() => {
-    fetchUsuarios();
-  }, []);
+  // useFocusEffect para carregar os usuários ao montar o componente
+  useFocusEffect(
+    useCallback(() => {
+      fetchUsuarios();
+    }, [])
+  );
 
   // Renderizar um item da lista
   const renderItem = ({ item }) => (

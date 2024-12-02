@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback  } from "react";
 import {
   StyleSheet,
   View,
@@ -11,6 +11,7 @@ import {
   TextInput,
   Alert,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import api from "../constants/api";
 import { Picker } from "@react-native-picker/picker";
 import { AuthContext } from "../contexts/auth";
@@ -59,7 +60,6 @@ export default function ListaLicitacoes() {
   };
 
   const editLicitacao = async () => {
-    console.log(numLicitacao , objeto , orgao , dataLicitacao , status)
 
     if (!numLicitacao || !objeto || !orgao || !dataLicitacao || !status) {
       Alert.alert("Erro", "Todos os campos são obrigatórios.");
@@ -79,7 +79,7 @@ export default function ListaLicitacoes() {
         orgao,
         portal: selectedLicitacao.portal,
         numero_identificacao: selectedLicitacao.numero_identificacao,
-        status_licitacao: selectedLicitacao.status_licitacao,
+        status_licitacao: status,
         objeto,
         cidade: selectedLicitacao.cidade,
         estado: selectedLicitacao.estado,
@@ -121,9 +121,11 @@ export default function ListaLicitacoes() {
     setModalVisible(true);
   };
 
-  useEffect(() => {
-    fetchLicitacoes();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+        fetchLicitacoes();
+    }, [])
+  );
 
   const openChecklistModal = (item) => {
     setSelectedLicitacao(item);
@@ -140,7 +142,27 @@ export default function ListaLicitacoes() {
         <Text style={styles.cardSubtitle}>Objeto: {item.objeto}</Text>
         <Text>Órgão: {item.orgao}</Text>
         <Text>Data Licitação: {new Date(item.data_licitacao).toLocaleDateString()}</Text>
-        <Text>Status: {item.status ? "Ativo" : "Inativo"}</Text>
+        <Text>
+          Status: 
+          {(() => {
+            switch (item.status_licitacao) {
+              case 1:
+                return " Em Andamento";
+              case 2:
+                return " Derrota";
+              case 3:
+                return " Cancelada";
+              case 4:
+                return " Confirmada";
+              case 5:
+                return " Cadastrada";
+              case 6:
+                return " Suspensa";
+              default:
+                return " Desconhecido"; // Caso o status não esteja mapeado
+            }
+          })()}     
+        </Text>
       </View>
       <View>
         <TouchableOpacity
@@ -220,9 +242,12 @@ export default function ListaLicitacoes() {
                   onValueChange={setStatus}
                   style={styles.picker}
                 >
-                  <Picker.Item label="Ativo" value="1" />
-                  <Picker.Item label="Inativo" value="2" />
-                  <Picker.Item label="Suspenso" value="3" />
+                  <Picker.Item label="Em Andamento" value="1" />
+                  <Picker.Item label="Derrota" value="2" />
+                  <Picker.Item label="Cancelada" value="3" />
+                  <Picker.Item label="Confirmada" value="4" />
+                  <Picker.Item label="Cadastrada" value="5" />
+                  <Picker.Item label="Suspensa" value="6" />
                 </Picker>
               </View>
               <View style={styles.divButton}>
@@ -287,13 +312,13 @@ export default function ListaLicitacoes() {
           <View style={styles.modalContent}>
             {/* Componente Checklist */}
             {selectedLicitacao && (
-              <Checklist data={selectedLicitacao} /> // Passa a licitação selecionada para o Checklist
+              <Checklist licitacao ={selectedLicitacao} /> // Passa a licitação selecionada para o Checklist
             )}
             <TouchableOpacity
               style={styles.closeButton}
               onPress={() => setModalChecklist(false)} // Fecha o modal
             >
-              <Text style={styles.closeButtonText}>Fechar</Text>
+              <Text style={styles.buttonText}>Fechar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -372,6 +397,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
+  },
+  closeButton : {
+    backgroundColor: "#ccc",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginHorizontal: 5,
+    wdith: '90%'
   },
   button: {
     backgroundColor: "#007bff",

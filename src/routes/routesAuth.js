@@ -19,7 +19,10 @@ export default props =>(
         <GestureHandlerRootView style={{flex: 1}}>
             <Drawer.Navigator
                 initialRouteName="DashBoard"
-                screenOptions={{headerShown:true}}
+                screenOptions={{
+                    headerShown: true,
+                    unmountOnBlur: true,
+                }}
             >
                 <Drawer.Screen name="DashBoard" component={dashboard}/>
                 <Drawer.Screen name="Criar licitação" component={licitacao}/>
