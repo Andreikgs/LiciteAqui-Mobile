@@ -74,6 +74,7 @@ export default function ListaLicitacoes() {
     try {
       await api.put("/licitacao/atualizar/", {
         id_licitacao: selectedLicitacao.id_licitacao,
+        id_cliente : selectedLicitacao.id_cliente,
         num_licitacao: numLicitacao,
         modalidade: selectedLicitacao.modalidade,
         orgao,

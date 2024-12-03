@@ -10,8 +10,8 @@ export default function BuscaCliente({ onClienteChange }) {
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response = await api.get("/cliente/listar");
-        setClientes(response.data);
+        const response = await api.get("/cliente/listar/todos");
+        setClientes(response.data.data);
       } catch (error) {
         console.error("Erro ao buscar clientes:", error);
         Alert.alert("Erro", "Não foi possível carregar os clientes.");

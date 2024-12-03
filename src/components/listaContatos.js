@@ -19,6 +19,7 @@ export default function ListaContatos({ clienteId }) {
 
 
   useEffect(() => {
+    console.log(clienteId);
     const fetchContatos = async () => {
       if (clienteId) {
         try {

@@ -17,6 +17,16 @@ export default cliente =>{
     const [senha, setSenha] = useState("");
     const { user } = useContext(AuthContext);
 
+    const resetForm = () => {
+        setNome("");
+        setEmail("");
+        setCpf("");
+        setSexo("");
+        setData(new Date());
+        setUsername("");
+        setSenha("");
+    };
+
     const handleUsuario = async function(){
         try {
             const response = await api.post("user/cadastrar", {
@@ -48,6 +58,7 @@ export default cliente =>{
                 senha : senha,
                 usuario_log : user.usuario
             });
+            resetForm();
             Alert.alert("Cadastro de novo login e usuário feito com sucesso!");
         } catch (error) {
             if (error.response?.data?.message) {
