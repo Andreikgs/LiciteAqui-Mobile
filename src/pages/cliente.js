@@ -7,6 +7,10 @@ import { useContext } from "react";
 import { AuthContext } from '../contexts/auth';
 import api from "../constants/api";
 
+function removerMasca(doc) {
+return doc.replace(/\D/g, ''); // Remove tudo que não é dígito
+}
+
 export default cliente =>{
     const [cnpj, setCnpj] = useState("");
     const [razaoSocial, setRazaoSoc] = useState("");
@@ -28,15 +32,15 @@ export default cliente =>{
         try {
             // Envio da requisição post para a API com o endpoint de cadastrar clientes
             const response = await api.post("/cliente/cadastrar", {
-                cnpj: cnpj,
+                cnpj: removerMasca(cnpj),
                 razao_social: razaoSocial,
                 nome_fantasia: nomeFantasia,
                 status: status,
                 data_cadastro : formatarData(data),
                 usuario : user.usuario  
             });
+            handleContato(response.data.data.id_cliente); // apenas para teste enquanto o cliente n retornar 200
         } catch (error) {
-            handleContato(3); // apenas para teste enquanto o cliente n retornar 200
             // Log completo para depuração
             console.log("Erro completo:", error);
     
@@ -71,14 +75,13 @@ export default cliente =>{
                 nome_completo : nome,
                 sexo : sexo ,
                 data_nascimento : formatarData(dataBirth), 
-                cpf : cpf,
+                cpf : removerMasca(cpf),
                 status_cadastro : status,
                 email : email,
                 usuario : user.usuario 
             });
- 
-            console.log(response.data);
-            console.log(" Sucesso!!!");
+            Alert.alert("Cadastro de novo cliente e contato realizado!");
+            limparCampos();
         } catch (error) {
             // Log completo para depuração
             console.log("Erro completo:", error);
@@ -119,21 +122,21 @@ export default cliente =>{
     const formatarCPF = (texto) => {
         let value = texto.replace(/\D/g, '');
 
-        // if (value.length > 11) {
-        //     value = value.substring(0, 11);
-        // }
+        if (value.length > 11) {
+            value = value.substring(0, 11);
+        }
 
-        // if (value.length > 0) {
-        //     value = value.replace(/(\d{3})(\d)/, '$1.$2');
-        // }
+        if (value.length > 0) {
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        }
 
-        // if (value.length > 7) {
-        //     value = value.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
-        // }
+        if (value.length > 7) {
+            value = value.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+        }
 
-        // if (value.length > 11) {
-        //     value = value.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
-        // }
+        if (value.length > 11) {
+            value = value.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
+        }
 
          setCpf(value);
     };
@@ -141,27 +144,47 @@ export default cliente =>{
     const formatarCNPJ = (texto) => {
         let value = texto.replace(/\D/g, '');
 
-        // if (value.length > 14) {
-        //     value = value.substring(0, 14);
-        // }
+        if (value.length > 14) {
+            value = value.substring(0, 14);
+        }
 
-        // if (value.length > 2) {
-        //     value = value.replace(/(\d{2})(\d)/, '$1.$2');
-        // }
+        if (value.length > 2) {
+            value = value.replace(/(\d{2})(\d)/, '$1.$2');
+        }
 
-        // if (value.length > 6) {
-        //     value = value.replace(/(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-        // }
+        if (value.length > 6) {
+            value = value.replace(/(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+        }
 
-        // if (value.length > 10) {
-        //     value = value.replace(/(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3/$4');
-        // }
+        if (value.length > 10) {
+            value = value.replace(/(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3/$4');
+        }
 
-        // if (value.length > 14) {
-        //     value = value.replace(/(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/, '$1.$2.$3/$4-$5');
-        // }
+        if (value.length > 14) {
+            value = value.replace(/(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/, '$1.$2.$3/$4-$5');
+        }
 
         setCnpj(value);
+    };
+
+    const limparCampos = () => {
+        setCnpj("");
+        setRazaoSoc("");
+        setNomeFant("");
+        setStatus("");
+        setData(new Date());
+        setServicos([]);
+        setShowDatePicker(false);
+        setNome("");
+        setEmail("");
+        setTipoTel("");
+        setTel("");
+        setSexo("");
+        setCpf("");
+        setDDD("");
+        setDataBirth(new Date());
+        setShowDatePickerBirth(false);
+        setServico("");
     };
 
     useFocusEffect(
@@ -280,13 +303,18 @@ export default cliente =>{
                     
 
                 <Text style={estilo.label}>Tipo de Telefone</Text>
-                <TextInput
-                    placeholder=""
-                    placeholderTextColor="#000"
-                    style={estilo.input}
-                    value={tipoTel}
-                    onChangeText={(tipoTel)=>setTipoTel(tipoTel)}
-                />
+                <View style={estilo.input}>
+                    <Picker
+                        selectedValue={tipoTel}
+                        onValueChange={(tipoTel) => setTipoTel(tipoTel)}
+                        style={estilo.picker}
+                    >
+                        <Picker.Item label="Selecione" value="" />
+                        <Picker.Item label="Celular" value="1" />
+                        <Picker.Item label="Residencial" value="2" />
+                        <Picker.Item label="Comercial" value="3" />
+                    </Picker>
+                </View>
                 <Text style={estilo.description}>Insira o tipo de Telefone do contato.</Text>
 
                 <Text style={estilo.label}>DDD</Text>

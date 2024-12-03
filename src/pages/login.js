@@ -53,7 +53,7 @@ export default props =>{
 
     // Usando use effect para buscar no storage os dados de login na primeira vez que a página for carregada 
     useEffect(()=>{
-        CarregarDados();
+        //CarregarDados();
     }, []);
 
     return(

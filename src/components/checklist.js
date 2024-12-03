@@ -64,6 +64,7 @@ export default ({ licitacao }) => {
       setSelectedIds(licitacaoDocIds); // Atualiza os IDs selecionados para refletir a tabela documentos_licitacao
       setInitialSelectedIds(licitacaoDocIds); // Salva os IDs originalmente selecionados
     } catch (error) {
+      setDocumentos(docs);
       console.error("Erro ao buscar documentos da licitação:", error);
       Alert.alert(
         "Erro",

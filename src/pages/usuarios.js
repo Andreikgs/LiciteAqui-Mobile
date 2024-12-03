@@ -14,12 +14,11 @@ export default cliente =>{
     const [data, setData] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [username, setUsername] = useState("");
-    const [senha, setSenha] = useState("AuthContext");
+    const [senha, setSenha] = useState("");
     const { user } = useContext(AuthContext);
 
     const handleUsuario = async function(){
         try {
-            console.log('teste1');
             const response = await api.post("user/cadastrar", {
                 nome_completo : nome,
                 email : email,
@@ -29,8 +28,8 @@ export default cliente =>{
                 usuario : user.usuario
             });
 
-            const lastInsertId = response.data.result.insertId;
-            console.log(lastInsertId);
+            const lastInsertId = response.data.data.id_usuario;
+            handleLogin(lastInsertId);
         } catch (error) {
             if (error.response?.data?.message) {
                 // Exibe a mensagem de erro retornada pela API
@@ -40,6 +39,25 @@ export default cliente =>{
             }
         }
     }
+
+    const handleLogin = async function(lastInsertId){
+        try {
+            const response = api.post("/login/cadastrar",{
+                usuario : lastInsertId,
+                username : username,
+                senha : senha,
+                usuario_log : user.usuario
+            });
+            Alert.alert("Cadastro de novo login e usuário feito com sucesso!");
+        } catch (error) {
+            if (error.response?.data?.message) {
+                // Exibe a mensagem de erro retornada pela API
+                Alert.alert(error.response.data.message);
+            } else {
+                Alert.alert("Ocorreu um erro. Tente novamente mais tarde.");
+            }
+        }
+    };
 
     return(
         <View style={estilo.container}>

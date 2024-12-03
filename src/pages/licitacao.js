@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TextInput, View, Text, TouchableOpacity, Alert } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
-import axios from "axios";
 import api from '../constants/api';
 import { useContext } from "react";
 import { AuthContext } from '../contexts/auth';
@@ -40,6 +39,7 @@ export default licitacao =>{
             // Envio da requisição post para a API com o endpoint de cadastrar licitacap
             const response = await api.post("/licitacao/cadastrar", {
                 num_licitacao: numLicita,
+                id_cliente: cliente,
                 modalidade: modalidade,
                 orgao: orgao,
                 portal: portal,
@@ -51,7 +51,8 @@ export default licitacao =>{
                 data_licitacao : formatarData(data),
                 usuario : user.usuario
             });
-            // console.log(response.data);
+            Alert.alert("Cadastrado licitação com sucesso!");
+            console.log("Sucesso!!");
         } catch (error) {
             // Log completo para depuração
             console.log("Erro completo:", error);
@@ -67,8 +68,8 @@ export default licitacao =>{
 
     const fetchClientes = async ()=> {
         try {
-            const response = await api.get("/cliente/listar");
-            setClientes(response.data);
+            const response = await api.get("/cliente/listar/todos");
+            setClientes(response.data.data);
         } catch (error) {
             // Log completo para depuração
             console.log("Erro completo:", error);
@@ -103,6 +104,7 @@ export default licitacao =>{
                 />
                 <Text style={estilo.description}>Informe o órgão responsável.</Text>
 
+                <Text style={estilo.label}>Cliente</Text>
                 <View style={estilo.input}>
                 <Picker
                     selectedValue={cliente} 

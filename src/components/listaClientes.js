@@ -31,9 +31,8 @@ export default function ListaClientes() {
 
   const fetchClientes = async () => {
     try {
-      const response = await api.get("/cliente/listar");
-      const data = Array.isArray(response.data) ? response.data : [response.data];
-      setClientes(data);
+      const response = await api.get("/cliente/listar/todos");
+      setClientes(response.data.data);
     } catch (error) {
       console.error("Erro ao buscar clientes:", error);
       Alert.alert("Erro", "Não foi possível carregar os dados dos clientes.");

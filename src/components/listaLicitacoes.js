@@ -45,7 +45,7 @@ export default function ListaLicitacoes() {
     try {
       await api.delete("/licitacao/deletar/", {
         data: {
-          id_licitacao: selectedLicitacao.num_licitacao,
+          num_licitacao: selectedLicitacao.num_licitacao,
           usuario: user.usuario,
         }
       });

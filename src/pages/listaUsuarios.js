@@ -20,8 +20,12 @@ export default function UsuariosList() {
     setLoading(true); // Inicia o carregamento
     try {
       const response = await api.get("/user/listar"); // API de listagem
-      const data = Array.isArray(response.data) ? response.data : [response.data];
-      setUsuarios(data); // Atualiza o estado com os usuários
+      if (response.data && response.data.data) {
+        setUsuarios(response.data.data); // Atualiza o estado com os usuários
+      } else {
+        setUsuarios([]); // Caso não haja dados
+        Alert.alert("Aviso", "Nenhum dado encontrado.");
+      }
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
       Alert.alert("Erro", "Não foi possível carregar os dados dos usuários.");
