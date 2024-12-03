@@ -6,6 +6,15 @@ import { useContext } from "react";
 import { AuthContext } from '../contexts/auth';
 import api from "../constants/api";
 
+function formatDateToYMD(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses começam do zero, então somamos 1
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
 export default cliente =>{
     const [nome, setNome] = useState("");
     const [email, setEmail] = useState("");
@@ -33,7 +42,7 @@ export default cliente =>{
                 nome_completo : nome,
                 email : email,
                 sexo : sexo, 
-                data_nascimento : data, 
+                data_nascimento : formatDateToYMD(data), 
                 cpf : cpf, 
                 usuario : user.usuario
             });
