@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Alert, ScrollView, Dimensions } from 'react-native';
+import { PieChart } from 'react-native-chart-kit';
+
+const screenWidth = Dimensions.get('window').width;
 
 const App = () => {
     const [data, setData] = useState([]);
@@ -8,7 +11,7 @@ const App = () => {
 
     const fetchGeneralData = async () => {
         try {
-            const response = await fetch('http://10.136.32.131:5000/analise_licitacoes'); // Substitua pelo IP do seu backend
+            const response = await fetch('http://192.168.2.110:5000/analise_licitacoes'); // Substitua pelo IP do seu backend
             const json = await response.json();
             setData(json);
         } catch (err) {
@@ -18,7 +21,7 @@ const App = () => {
 
     const fetchStatesData = async () => {
         try {
-            const response = await fetch('http://10.136.32.131:5000/analise_licitacoes_estados'); // Substitua pelo IP do seu backend
+            const response = await fetch('http://192.168.2.110:5000/analise_licitacoes_estados'); // Substitua pelo IP do seu backend
             const json = await response.json();
             setStatesData(json);
         } catch (err) {
@@ -43,8 +46,25 @@ const App = () => {
         );
     }
 
+    // Preparar dados para o gráfico de pizza
+    const pieChartData = statesData.map((item, index) => ({
+        name: item.estado,
+        population: item.total_vencida, // Substitua por outra métrica se necessário
+        color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.8)`,
+        legendFontColor: '#7F7F7F',
+        legendFontSize: 15,
+    }));
+
+    const pieChartData2 = statesData.map((item, index) => ({
+        name: item.estado,
+        population: item.total_derrota, // Substitua por outra métrica se necessário
+        color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.8)`,
+        legendFontColor: '#7F7F7F',
+        legendFontSize: 15,
+    }));
+
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 50 }}>
             <Text style={styles.title}>Análise Geral</Text>
             <View style={styles.card}>
                 <Text style={styles.text}>Total de Licitações: {data.total_licitacoes}</Text>
@@ -53,19 +73,35 @@ const App = () => {
                 <Text style={styles.text}>% Vencidas: {data.porcentagem_vencida}%</Text>
             </View>
 
-            <Text style={styles.title}>Análise por Estado</Text>
-            <FlatList
-                data={statesData}
-                keyExtractor={(item) => item.estado}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <Text style={styles.text}>Estado: {item.estado}</Text>
-                        <Text style={styles.text}>Vencidas: {item.total_vencida}</Text>
-                        <Text style={styles.text}>Derrotas: {item.total_derrota}</Text>
-                    </View>
-                )}
-            />
-        </View>
+            <View style={styles.card}>
+                <Text style={styles.title}>Vitórias por Estado</Text>
+                <PieChart
+                    data={pieChartData}
+                    width={screenWidth - 40} // Tamanho do gráfico
+                    height={220}
+                    chartConfig={{
+                        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+                    }}
+                    accessor="population"
+                    backgroundColor="transparent"
+                    paddingLeft="15"
+                    absolute
+                />
+                <Text style={styles.title}>Derrotas por Estado</Text>
+                <PieChart
+                    data={pieChartData2}
+                    width={screenWidth - 40} // Tamanho do gráfico
+                    height={220}
+                    chartConfig={{
+                        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+                    }}
+                    accessor="population"
+                    backgroundColor="transparent"
+                    paddingLeft="15"
+                    absolute
+                />
+            </View>
+        </ScrollView>
     );
 };
 

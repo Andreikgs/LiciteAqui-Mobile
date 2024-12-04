@@ -1,6 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity, Modal, TextInput } from "react-native";
 import api from "../constants/api";
+import { AuthContext } from '../contexts/auth';
+
+function formatDateToYMD(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses começam do zero, então somamos 1
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
 
 export default function ListaContatos({ clienteId }) {
   const [contatos, setContatos] = useState([]);
@@ -14,53 +24,76 @@ export default function ListaContatos({ clienteId }) {
   const [sexo, setSexo] = useState("");
   const [cpf, setCpf] = useState("");
   const [ddd, setDDD] = useState("");
-  const [dataBirth, setDataBirth] = useState(new Date());
-  const [showDatePickerBirth, setShowDatePickerBirth] = useState(false);
-
+  const [dataNascimento, setDataNascimento] = useState(new Date());
+  const { user } = useContext(AuthContext);
+  const [statusCadastro, setStatusCadastro] = useState("");
 
   useEffect(() => {
-    console.log(clienteId);
     const fetchContatos = async () => {
       if (clienteId) {
         try {
-          const response = await api.get(`/contatoCliente/listarPorId?cliente_id=${clienteId}`); // Envia o ID na URL
+          const response = await api.get(`/contatoCliente/listarPorId?cliente_id=${clienteId}`);
           setContatos(response.data);
         } catch (error) {
           console.error("Erro ao buscar contatos:", error);
           Alert.alert("Erro", "Não foi possível carregar os contatos.");
-          setContatos([]); // Limpa a lista quando há erro na resposta de requisição
+          setContatos([]);
         }
       } else {
-        setContatos([]); // Limpa a lista quando nenhum cliente está selecionado
+        setContatos([]);
       }
     };
     fetchContatos();
-  }, [clienteId]); // Atualiza sempre que o clienteId mudar
+  }, [clienteId]);
 
   useEffect(() => {
+    console.log(selectedContato)
     if (selectedContato) {
       setNome(selectedContato.nome_completo || "");
       setTel(selectedContato.telefone || "");
+      setEmail(selectedContato.email || "");
+      setTipoTel(selectedContato.tipo_telefone || "");
+      setSexo(selectedContato.sexo || "");
+      setDDD(selectedContato.ddd || "");
+      setCpf(selectedContato.cpf || "");
+      setDataNascimento(selectedContato.data_nascimento || new Date());
+      setStatusCadastro(selectedContato.status_cadastro || "");
     }
   }, [selectedContato]);
 
   const salvarEdicaoContato = async () => {
-    if (!nomeCompleto || !telefone) {
-      Alert.alert("Erro", "Preencha todos os campos para salvar.");
+    console.log(nome, tel, email, tipoTel, sexo, cpf, ddd, dataNascimento, statusCadastro);
+    if (!nome || !tel || !email || !tipoTel || !sexo || !cpf || !ddd || !dataNascimento) {
+      Alert.alert("Erro", "Preencha todos os campos obrigatórios para salvar.");
       return;
     }
+  
     try {
-      await api.put(`/contatoCliente/editar/${selectedContato.id_contato}`, {
-        nome_completo: nomeCompleto,
-        telefone,
-      });
+      const payload = {
+        id_contato: selectedContato.id_contato,
+        cliente: clienteId,
+        tipo_telefone: tipoTel,
+        ddd: ddd,
+        telefone: tel,
+        nome_completo: nome,
+        sexo: sexo,
+        data_nascimento: formatDateToYMD(dataNascimento),
+        cpf: cpf,
+        email: email,
+        usuario: user.usuario,
+        status_cadastro: 1, // Novo campo incluído
+      };
+  
+      await api.put(`/contatoCliente/atualizar/`, payload);
+  
       Alert.alert("Sucesso", "Contato atualizado com sucesso!");
       setModalVisibleEditContato(false);
       setSelectedContato(null);
+  
       setContatos((prev) =>
         prev.map((contato) =>
           contato.id_contato === selectedContato.id_contato
-            ? { ...contato, nome_completo: nomeCompleto, telefone }
+            ? { ...contato, ...payload }
             : contato
         )
       );
@@ -94,7 +127,6 @@ export default function ListaContatos({ clienteId }) {
         <Text style={styles.info}>Selecione um cliente para visualizar os contatos</Text>
       )}
 
-      {/* Modal de Edição */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -124,8 +156,8 @@ export default function ListaContatos({ clienteId }) {
               style={styles.input}
               value={email}
               onChangeText={setEmail}
-              placeholder="Digite o telefone"
-              keyboardType="phone-pad"
+              placeholder="Digite o e-mail"
+              keyboardType="email-address"
             />
             <View style={styles.divButton}>
               <TouchableOpacity

@@ -320,7 +320,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
     marginHorizontal: 5,
-    flex: 1,
   },
   buttonText: {
     color: "#fff",

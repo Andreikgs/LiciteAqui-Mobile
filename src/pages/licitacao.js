@@ -40,7 +40,7 @@ export default licitacao =>{
             const response = await api.post("/licitacao/cadastrar", {
                 num_licitacao: numLicita,
                 id_cliente: cliente,
-                modalidade: modalidade,
+                modalidade: parseInt(modalidade),
                 orgao: orgao,
                 portal: portal,
                 numero_identificacao : codIdentifica,

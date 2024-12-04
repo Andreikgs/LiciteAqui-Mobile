@@ -17,6 +17,15 @@ import { Picker } from "@react-native-picker/picker";
 import { AuthContext } from "../contexts/auth";
 import Checklist from "../components/checklist"; // Certifique-se de que o componente está exportado corretamente
 
+function formatDateToYMD(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses começam do zero, então somamos 1
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
 export default function ListaLicitacoes() {
   const [licitacoes, setLicitacoes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,6 +79,7 @@ export default function ListaLicitacoes() {
       Alert.alert("Erro", "Licitação não selecionada.");
       return;
     }
+    
   
     try {
       await api.put("/licitacao/atualizar/", {
@@ -80,11 +90,11 @@ export default function ListaLicitacoes() {
         orgao,
         portal: selectedLicitacao.portal,
         numero_identificacao: selectedLicitacao.numero_identificacao,
-        status_licitacao: status,
+        status_licitacao: parseInt(status),
         objeto,
         cidade: selectedLicitacao.cidade,
         estado: selectedLicitacao.estado,
-        data_licitacao: dataLicitacao,
+        data_licitacao: formatDateToYMD(dataLicitacao),
         usuario: user.usuario,
       });
   
@@ -244,10 +254,10 @@ export default function ListaLicitacoes() {
                   style={styles.picker}
                 >
                   <Picker.Item label="Em Andamento" value="1" />
-                  <Picker.Item label="Derrota" value="2" />
+                  <Picker.Item label="Encerrada" value="2" />
                   <Picker.Item label="Cancelada" value="3" />
                   <Picker.Item label="Confirmada" value="4" />
-                  <Picker.Item label="Cadastrada" value="5" />
+                  <Picker.Item label="Derrota" value="5" />
                   <Picker.Item label="Suspensa" value="6" />
                 </Picker>
               </View>
@@ -385,6 +395,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     width: "90%",
+    height: "70%",
     maxWidth: 400,
     minHeight: 200,
   },
